@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://cekpd6eoorrqa"]
+
+[ext_resource type="Script" path="res://scenes/actor/scripts/actor.gd" id="1_ny558"]
+[ext_resource type="Script" path="res://scenes/actor/scripts/actor_input.gd" id="2_gqas7"]
+[ext_resource type="Script" path="res://scenes/actor/scripts/actor_move.gd" id="3_sr48j"]
+
+[node name="Actor" type="Node2D"]
+script = ExtResource("1_ny558")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+z_index = 1
+polygon = PackedVector2Array(-6, -6, 6, -6, 6, 6, -6, 6)
+
+[node name="Input" type="Node" parent="."]
+script = ExtResource("2_gqas7")
+
+[node name="Move" type="Node" parent="." node_paths=PackedStringArray("parent", "input")]
+script = ExtResource("3_sr48j")
+parent = NodePath("..")
+input = NodePath("../Input")
+max_speed = 180.0
+scaler = 0.7

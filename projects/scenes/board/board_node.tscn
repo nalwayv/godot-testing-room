@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://x4430sgtmuxi"]
+
+[node name="BoardNode" type="Node2D"]
+editor_description = "Used for tilemap tiles visual placement."
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.882353, 0.498039, 0.129412, 1)
+polygon = PackedVector2Array(-5, -5, 5, -5, 5, 5, -5, 5)
