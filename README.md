@@ -19,6 +19,6 @@ Random projects made while learning the [Godot](https://godotengine.org/) game e
 
 #### Description
 
-Using a graph tree to create a node path that an actor can travel allong.
+Using a graph tree to create a node path that an actor can travel along.
 
 </details>
