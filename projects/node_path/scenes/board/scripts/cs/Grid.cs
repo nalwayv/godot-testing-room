@@ -24,7 +24,7 @@ public partial class Grid : Node
 	{
 		// LINES
 
-		for (int i = 0; i < Height; i+=Cell)
+		for (int i = 0; i < Height; i += Cell)
 		{
 			Line2D line = new()
 			{
@@ -40,7 +40,7 @@ public partial class Grid : Node
 			AddChild(line);
 		}
 
-		for (int i = 0; i < Width; i+=Cell)
+		for (int i = 0; i < Width; i += Cell)
 		{
 			Line2D line = new()
 			{
@@ -55,20 +55,20 @@ public partial class Grid : Node
 			AddChild(line);
 		}
 
-        // BACKGROUND
+		// BACKGROUND
 
-        Polygon2D polygon2D = new()
-        {
-            Polygon = new[] 
+		Polygon2D polygon2D = new()
+		{
+			Polygon = new[]
 			{
 				new Vector2(0f, 0f),
 				new Vector2(Width, 0f),
 				new Vector2(Width, Height),
 				new Vector2(0f, Height),
-        	},
-            Color = _bgColor,
-            ZIndex = -1
-        };
-        AddChild(polygon2D);
+			},
+			Color = _bgColor,
+			ZIndex = -1
+		};
+		AddChild(polygon2D);
 	}
 }

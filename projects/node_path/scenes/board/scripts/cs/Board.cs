@@ -11,7 +11,7 @@ public partial class Board : TileMap
 	public const float NodeDistance = 20f;
 
 
-	private Color _graphColor = new (0f,0f,0f);
+	private Color _graphColor = new(0f, 0f, 0f);
 	private List<Vector2I> _coords = new();
 	private BoardGraph _boardGraph;
 	private Actor _actor;
@@ -31,7 +31,7 @@ public partial class Board : TileMap
 	{
 		// GET COORDS FROM TILEMAP
 
-		foreach(var coord in GetUsedCells(_tileLayer))
+		foreach (var coord in GetUsedCells(_tileLayer))
 		{
 			var cell = GetCellSourceId(_tileLayer, coord);
 
@@ -88,44 +88,44 @@ public partial class Board : TileMap
 			Queue<BoardNode> que = new();
 			que.Enqueue(first);
 
-			while(que.Count > 0)
+			while (que.Count > 0)
 			{
 
 				BoardNode current = que.Dequeue();
 
-				foreach(BoardNode neighbour in current)
+				foreach (BoardNode neighbour in current)
 				{
 					// DRAW LINE
 
-                    Line2D line = new()
-                    {
-                        Points = new[]
+					Line2D line = new()
+					{
+						Points = new[]
 						{
-                        	current.Position,
+							current.Position,
 							neighbour.Position
-                    	},
-                        Width = 1f,
-                        DefaultColor = _graphColor
-                    };
-                    AddChild(line);
+						},
+						Width = 1f,
+						DefaultColor = _graphColor
+					};
+					AddChild(line);
 
 					// DRAW CIRCLE
 
 					Vector2[] pts = new Vector2[8];
 					float radius = 4f;
-					
+
 					for (int i = 0; i < pts.Length; i++)
-					{	
+					{
 						float at = i * Mathf.Tau / pts.Length;
 						pts[i] = current.Position + new Vector2(Mathf.Cos(at), Mathf.Sin(at)) * radius;
 					}
 
-                    Polygon2D polygon2D = new()
-                    {
-                        Color = _graphColor,
-                        Polygon = pts
-                    };
-                    AddChild(polygon2D);
+					Polygon2D polygon2D = new()
+					{
+						Color = _graphColor,
+						Polygon = pts
+					};
+					AddChild(polygon2D);
 
 					if (!visited.Contains(neighbour.Position))
 					{
@@ -140,7 +140,7 @@ public partial class Board : TileMap
 
 	private void SetupActors()
 	{
-		Vector2I coord  = Vector2I.Zero;
+		Vector2I coord = Vector2I.Zero;
 		Vector2 local = MapToLocal(coord);
 
 		int at = _boardGraph.FindIdx(local);
