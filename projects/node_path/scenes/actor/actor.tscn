@@ -1,22 +1,23 @@
 [gd_scene load_steps=4 format=3 uid="uid://cekpd6eoorrqa"]
 
-[ext_resource type="Script" path="res://scenes/actor/scripts/actor.gd" id="1_ny558"]
-[ext_resource type="Script" path="res://scenes/actor/scripts/actor_input.gd" id="2_gqas7"]
-[ext_resource type="Script" path="res://scenes/actor/scripts/actor_move.gd" id="3_sr48j"]
+[ext_resource type="Script" path="res://scenes/actor/scripts/cs/Actor.cs" id="1_aj4v7"]
+[ext_resource type="Script" path="res://scenes/actor/scripts/cs/ActorInput.cs" id="2_fibfv"]
+[ext_resource type="Script" path="res://scenes/actor/scripts/cs/ActorMove.cs" id="3_jelml"]
 
 [node name="Actor" type="Node2D"]
-script = ExtResource("1_ny558")
+editor_description = "Actor to move around on the grid."
+script = ExtResource("1_aj4v7")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 z_index = 1
 polygon = PackedVector2Array(-6, -6, 6, -6, 6, 6, -6, 6)
 
 [node name="Input" type="Node" parent="."]
-script = ExtResource("2_gqas7")
+script = ExtResource("2_fibfv")
 
-[node name="Move" type="Node" parent="." node_paths=PackedStringArray("parent", "input")]
-script = ExtResource("3_sr48j")
-parent = NodePath("..")
-input = NodePath("../Input")
-max_speed = 180.0
-scaler = 0.7
+[node name="Move" type="Node" parent="." node_paths=PackedStringArray("Parent", "ActorInput")]
+script = ExtResource("3_jelml")
+Parent = NodePath("..")
+ActorInput = NodePath("../Input")
+Speed = 180.0
+Scale = 0.7

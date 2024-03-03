@@ -14,6 +14,7 @@ var _coords: Array[Vector2i] = []
 var _graph: BoardGhraph
 var _actor: Actor
 
+
 #-- Callbacks
 func _ready() -> void:
 	_graph = BoardGhraph.new()
@@ -25,7 +26,7 @@ func _ready() -> void:
 
 #-- Funcs
 func _setup_board() -> void:
-	# USE TILEMAP TO FOR NODE PLACEMENT
+	# GET COORDS FROM TILEMAP
 
 	for cell_coord in get_used_cells(TILE_LAYER):
 		var cell := get_cell_source_id(TILE_LAYER, cell_coord)

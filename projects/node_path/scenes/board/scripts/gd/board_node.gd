@@ -33,21 +33,21 @@ func _find_idx(origin: Vector2) -> int:
 func value_to(origin: Vector2) -> float:
     var at := _find_idx(origin)
 
-    if at != NOT_FOUND:
-        return values[at]
-
-    return 1.0
+    if at == NOT_FOUND:
+        return 1.0
+    
+    return values[at]
 
 
 ## Check if allowed to travel
 func allowd_to_move_to(origin: Vector2, mask: int) -> bool:
     var at := _find_idx(origin)
 
-    if at != NOT_FOUND:
-        var value := masks[at]
-        return (value & mask) != 0
+    if at == NOT_FOUND:
+        return false
 
-    return false
+    var value := masks[at]
+    return (value & mask) != 0
 
 
 ## Add neighbour to list of neighbours and its value
@@ -59,14 +59,13 @@ func add_neighbour(node: BoardNode, value: float, mask: int) -> void:
 
 ## Remove node from neighbours
 func remove_neighbour(origin: Vector2) -> bool:
-    var idx := _find_idx(origin)
+    var at := _find_idx(origin)
     
-    if idx != NOT_FOUND:
-        neighbours.remove_at(idx)
-        values.remove_at(idx)
-        return true
-
-    return false
-
-
-
+    if at == NOT_FOUND:
+        return false
+    
+    neighbours.remove_at(at)
+    values.remove_at(at)
+    masks.remove_at(at)
+    
+    return true

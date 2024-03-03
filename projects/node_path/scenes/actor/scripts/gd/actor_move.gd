@@ -8,7 +8,7 @@ class_name ActorMove extends Node
 @export var input: ActorInput
 
 @export_category("Speed")
-@export_range(100.0, 400.0, 1.0) var max_speed: float
+@export_range(100.0, 300.0, 1.0) var max_speed: float
 @export_range(0.0, 1.0, 0.1) var scaler: float
 
 var _is_moveing := false
@@ -24,7 +24,7 @@ var board: Board
 #-- Callbacks
 func _process(delta: float) -> void:
 	_update_target()
-	_update_position(delta)
+	_update_parent_position(delta)
 
 
 #--
@@ -69,21 +69,28 @@ func _update_target() -> void:
 						_is_moveing = true
 		
 
-func _update_position(delta: float) -> void:
+func _update_parent_position(delta: float) -> void:
 	if not _is_moveing:
 		return
 
-	# UPDATE POSITION
+	# DISTANCE REMAINING TO TARGET
 
-	var distance := (_target_position - parent.position).abs()
+	var distance := parent.position.distance_to(_target_position)
+
+	# CURRENT VELOCITY
+
 	var velocity := _target_direction * (max_speed * scaler * _target_speed) * delta
 
-	if abs(velocity.x) > distance.x:
-		velocity.x = distance.x * _target_direction.x
+	# HAS VELOCITY OVERTAKEN DISTANCE ?
+
+	if abs(velocity.x) > distance:
+		# _target_direction.x is ever + or -
+		velocity.x = distance * _target_direction.x
 		_is_moveing = false
 
-	if abs(velocity.y) > distance.y:
-		velocity.y = distance.y * _target_direction.y
+	if abs(velocity.y) > distance:
+		# _target_direction.y is ever + or -
+		velocity.y = distance * _target_direction.y
 		_is_moveing = false
 
 	parent.position += velocity
