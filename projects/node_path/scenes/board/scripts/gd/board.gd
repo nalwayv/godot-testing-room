@@ -7,7 +7,7 @@ const PATH_VALUE_DEFAULT := 1.0
 const MASK_VALUE_DEFAULT := 2
 const NODE_DISTANCE := 20.0
 
-@export_category("Color")
+@export_category("Grid Color")
 @export var color: Color
 
 var _coords: Array[Vector2i] = []
@@ -25,6 +25,29 @@ func _ready() -> void:
 
 
 #-- Funcs
+func _add_line(from: Vector2, to: Vector2) -> void:
+	var line := Line2D.new()
+	line.points = [from, to]
+	line.width = 1
+	line.default_color = color
+	add_child(line)
+
+
+func _add_circle(origin: Vector2, radius: float) -> void:
+	var pts := 6
+	var pts_data: Array[Vector2] = []
+	
+	pts_data.resize(pts + 1)
+	for i in range(pts + 1):
+		var at: float = i * TAU / pts
+		pts_data[i] = origin+ Vector2(cos(at), sin(at)) * radius
+
+	var circle := Polygon2D.new()
+	circle.color = color
+	circle.polygon = pts_data
+	add_child(circle)
+
+
 func _setup_board() -> void:
 	# GET COORDS FROM TILEMAP
 
@@ -65,40 +88,21 @@ func _setup_board() -> void:
 		var queue: Array[BoardNode] = [first]
 
 		while not queue.is_empty():
+			
 			var current: BoardNode = queue.pop_front()
-			var current_p: Vector2 = current.position
-
 			for neighbour in current.neighbours:
-				var neighbour_p: Vector2 = neighbour.position
 
 				# DRAW LINE
-
-				var line := Line2D.new()
-				line.points = [current_p, neighbour_p]
-				line.width = 1
-				line.default_color = color
-				add_child(line)
-
+				_add_line(current.position, neighbour.position)
+	
 				# DRAW CIRCLE
 
-				var radius := 4.0
-				var pts := 8
-				var pts_data: Array[Vector2] = []
-				
-				pts_data.resize(pts + 1)
-				for i in range(pts + 1):
-					var at: float = i * TAU / pts
-					pts_data[i] = current_p + Vector2(cos(at), sin(at)) * radius
-
-				var circle := Polygon2D.new()
-				circle.color = color
-				circle.polygon = pts_data
-				add_child(circle)
+				_add_circle(current.position, 5)
 
 				# ADD TO VISITED
 
-				if visited.find(neighbour_p) == -1:
-					visited.append(neighbour_p)
+				if visited.find(neighbour.position) == -1:
+					visited.append(neighbour.position)
 					queue.append(neighbour)
 
 
@@ -111,6 +115,12 @@ func _setup_actor() -> void:
 		_actor.setup(local, self)
 
 
-# Find node based on its origin position
 func find_node(origin: Vector2) -> BoardNode:
 	return _graph.find_node(origin)
+
+
+func find_node_direction(origin: Vector2, direction: Vector2) -> BoardNode:
+	if not direction.is_normalized():
+		return _graph.find_node(origin + direction.normalized() * NODE_DISTANCE)
+		
+	return _graph.find_node(origin + direction * NODE_DISTANCE)

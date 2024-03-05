@@ -42,17 +42,19 @@ public partial class BoardNode : IEnumerable<BoardNode>
 	}
 
 
-	public bool Has(Vector2 origin)
+	public BoardNode FindNeighbourInDirectionOf(Vector2 direction)
 	{
+		Vector2 dir = direction.IsNormalized() ? direction : direction.Normalized();
+
 		for (int i = 0; i < _neighbours.Count; i++)
 		{
-			if (_neighbours[i].Position == origin) 
+			Vector2 directionTo = Position.DirectionTo(_neighbours[i].Position);
+			if(directionTo == dir)
 			{
-				return true;
+				return _neighbours[i];
 			}
 		}
-
-		return false;
+		return null;
 	}
 
 

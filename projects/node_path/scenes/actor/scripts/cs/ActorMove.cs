@@ -2,9 +2,9 @@ using Godot;
 
 public partial class ActorMove : Node
 {
-	[ExportCategory("Parent")]
+	[ExportCategory("Actor")]
 	[Export]
-	public Actor Parent { get; set; }
+	public Actor Actor { get; set; }
 
 	[ExportCategory("Components")]
 	[Export]
@@ -39,26 +39,28 @@ public partial class ActorMove : Node
 			return;
 		}
 
+		// NEW DIRECTION
+
 		if (ActorInput.Direction != Vector2.Zero)
 		{
 			_targetDirection = ActorInput.Direction;
 
-			BoardNode target = Board.FindNode(Parent.Position + _targetDirection * Board.NodeDistance);
-			if (target != null)
+			BoardNode current = Board.FindNode(Actor.Position);
+			BoardNode target = current.FindNeighbourInDirectionOf(_targetDirection);
+
+			if (target != null && current.CanMoveTo(target.Position, Board.DefaultMaskValue))
 			{
-				BoardNode current = Board.FindNode(Parent.Position);
-				if (current.Has(target.Position))
+				if (current.CanMoveTo(target.Position, Board.DefaultMaskValue))
 				{
-					if (current.CanMoveTo(target.Position, Board.DefaultMaskValue))
-					{
-						_currentDirection = _targetDirection;
-						_targetPosition = target.Position;
-						_targetSpeed = current.ValueTo(target.Position);
-						_isMoveing = true;
-					}
+					_currentDirection = _targetDirection;
+					_targetPosition = target.Position;
+					_targetSpeed = current.ValueTo(target.Position);
+					_isMoveing = true;
 				}
 			}
 		}
+
+		// ELSE TRY AND KEEP SAME DIRECTION
 
 		if (!_isMoveing)
 		{
@@ -66,18 +68,16 @@ public partial class ActorMove : Node
 			{
 				_targetDirection = _currentDirection;
 
-				BoardNode target = Board.FindNode(Parent.Position + _targetDirection * Board.NodeDistance);
-				if (target != null)
+				BoardNode current = Board.FindNode(Actor.Position);
+				BoardNode target = current.FindNeighbourInDirectionOf(_targetDirection);
+
+				if (target != null && current.CanMoveTo(target.Position, Board.DefaultMaskValue))
 				{
-					BoardNode current = Board.FindNode(Parent.Position);
-					if (current.Has(target.Position))
+					if (current.CanMoveTo(target.Position, Board.DefaultMaskValue))
 					{
-						if (current.CanMoveTo(target.Position, Board.DefaultMaskValue))
-						{
-							_targetPosition = target.Position;
-							_targetSpeed = current.ValueTo(target.Position);
-							_isMoveing = true;
-						}
+						_targetPosition = target.Position;
+						_targetSpeed = current.ValueTo(target.Position);
+						_isMoveing = true;
 					}
 				}
 			}
@@ -94,7 +94,7 @@ public partial class ActorMove : Node
 
 		// DISTANCE REMAINING TO TARGET
 
-		float distance = Parent.Position.DistanceTo(_targetPosition);
+		float distance = Actor.Position.DistanceTo(_targetPosition);
 
 		// CURRENT VELOCITY
 
@@ -116,6 +116,6 @@ public partial class ActorMove : Node
 			_isMoveing = false;
 		}
 
-		Parent.Position += velocity;
+		Actor.Position += velocity;
 	}
 }

@@ -2,16 +2,19 @@ using Godot;
 
 public partial class Grid : Node
 {
-	[ExportCategory("Size")]
+	[ExportCategory("Info")]
 	[Export]
-	public int Width { get; set; }
+	public Vector2 Origin { get; set; }
 	[Export]
-	public int Height { get; set; }
+	public Vector2 Size { get; set; }
 	[Export]
-	public int Cell { get; set; }
+	public float Cell { get; set; } = 20;
 
-	private Color _lineColor = new(1f, 0.74f, 0.62f, 0.1f);
-	private Color _bgColor = new(0.3f, 0.3f, 0.3f, 1f);
+	[ExportCategory("Color")]
+	[Export]
+	public Color LineColor { get; set; } = new Color(1f, 0.74f, 0.62f, 0.1f);
+	[Export]
+	public Color BackgroundColor { get; set; } = new Color(0.3f, 0.3f, 0.3f, 0.8f);
 
 
 	public override void _Ready()
@@ -20,39 +23,33 @@ public partial class Grid : Node
 	}
 
 
+	private void AddLine(Vector2 from, Vector2 to)
+	{
+		Line2D line = new()
+		{
+			Points = new[] {from, to},
+			DefaultColor = LineColor,
+			Width = 1.0f,
+			ZIndex = 0
+		};
+		AddChild(line);
+	}
+
+
 	private void DrawGrid()
 	{
+		Vector2 end = Origin + Size;
+
 		// LINES
 
-		for (int i = 0; i < Height; i += Cell)
+		for (var i = Origin.Y; i <= end.Y; i += Cell)
 		{
-			Line2D line = new()
-			{
-				Points = new[]
-				{
-					new Vector2(0, i),
-					new Vector2(Width - 1, i)
-				},
-				DefaultColor = _lineColor,
-				Width = 1.0f,
-				ZIndex = 0
-			};
-			AddChild(line);
+			AddLine(new Vector2(Origin.X, i), new Vector2(end.X, i));
 		}
 
-		for (int i = 0; i < Width; i += Cell)
+		for (var i = Origin.X; i <= end.Y; i += Cell)
 		{
-			Line2D line = new()
-			{
-				Points = new[] {
-					new Vector2(i, 0),
-					new Vector2(i, Height - 1)
-				},
-				DefaultColor = _lineColor,
-				Width = 1.0f,
-				ZIndex = 0
-			};
-			AddChild(line);
+			AddLine(new Vector2(i, Origin.Y), new Vector2(i, end.Y));
 		}
 
 		// BACKGROUND
@@ -61,12 +58,12 @@ public partial class Grid : Node
 		{
 			Polygon = new[]
 			{
-				new Vector2(0f, 0f),
-				new Vector2(Width, 0f),
-				new Vector2(Width, Height),
-				new Vector2(0f, Height),
+				Origin,
+				new Vector2(Origin.X, end.Y),
+				end,
+				new Vector2(end.X, Origin.Y),
 			},
-			Color = _bgColor,
+			Color = BackgroundColor,
 			ZIndex = -1
 		};
 		AddChild(polygon2D);

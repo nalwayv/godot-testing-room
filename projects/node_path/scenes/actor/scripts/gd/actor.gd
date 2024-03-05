@@ -1,7 +1,9 @@
 class_name Actor extends Node2D
 
 
-var color := Color(0.88, 0.49, 0.12, 1)
+@export_category("Actor Color")
+@export var color := Color(0.88, 0.49, 0.12, 1)
+
 var _polygon: Polygon2D
 
 

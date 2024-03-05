@@ -17,6 +17,17 @@ func find_neighbour(origin: Vector2) -> BoardNode:
     return null
 
 
+func find_neighbour_in_direction_of(direction: Vector2) -> BoardNode:
+    var dir := direction if direction.is_normalized() else direction.normalized()
+
+    for node in neighbours:
+        var direction_to := position.direction_to(node.position)
+        if direction_to == dir:
+            return node
+
+    return null
+
+
 ## Find nodes idx location within neighbours array
 func _find_idx(origin: Vector2) -> int:
     var i := 0
@@ -40,7 +51,7 @@ func value_to(origin: Vector2) -> float:
 
 
 ## Check if allowed to travel
-func allowd_to_move_to(origin: Vector2, mask: int) -> bool:
+func can_move_to(origin: Vector2, mask: int) -> bool:
     var at := _find_idx(origin)
 
     if at == NOT_FOUND:

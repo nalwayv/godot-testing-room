@@ -1,8 +1,8 @@
 class_name ActorMove extends Node
 
 
-@export_category("Parent")
-@export var parent: Actor
+@export_category("Actor")
+@export var actor: Actor
 
 @export_category("Components")
 @export var input: ActorInput
@@ -12,7 +12,6 @@ class_name ActorMove extends Node
 @export_range(0.0, 1.0, 0.1) var scaler: float
 
 var _is_moveing := false
-
 var _current_direction := Vector2.ZERO
 var _target_direction := Vector2.ZERO
 var _target_position := Vector2.ZERO
@@ -27,47 +26,41 @@ func _process(delta: float) -> void:
 	_update_parent_position(delta)
 
 
-#--
+#-- Funcs
 func _update_target() -> void:
 	if _is_moveing:
 		return
-	
+
 	# NEW DIRECTION
 
 	if input.direction != Vector2.ZERO:
 		_target_direction = input.direction
 		
-		var target := board.find_node(parent.position + _target_direction * board.NODE_DISTANCE)
-		if target != null:
+		var current = board.find_node(actor.position)
+		var target := current.find_neighbour_in_direction_of(_target_direction)
 
-			var current := board.find_node(parent.position)
-			if current.find_neighbour(target.position) != null:
-			
-				if current.allowd_to_move_to(target.position, board.MASK_VALUE_DEFAULT):
-					
-					_current_direction = _target_direction
-					
-					_target_position = target.position
-					_target_speed = current.value_to(target.position)
-					_is_moveing = true
+		if target != null and current.can_move_to(target.position, board.MASK_VALUE_DEFAULT):
+				_current_direction = _target_direction
+				
+				_target_position = target.position
+				_target_speed = current.value_to(target.position)
+				_is_moveing = true
 
-	# ELSE KEEP SAME DIRECTION
+	# ELSE TRY KEEP SAME DIRECTION
 
 	if not _is_moveing:
 		if _current_direction != Vector2.ZERO:
 			_target_direction = _current_direction
 
-			var target := board.find_node(parent.position + _target_direction * board.NODE_DISTANCE)
-			if target != null:
+			var current = board.find_node(actor.position)
+			var target := current.find_neighbour_in_direction_of(_target_direction)
 
-				var current := board.find_node(parent.position)
-				if current.find_neighbour(target.position) != null:
+			if target != null and current.can_move_to(target.position, board.MASK_VALUE_DEFAULT):
+					
+					_target_position = target.position
+					_target_speed = current.value_to(target.position)
+					_is_moveing = true
 
-					if current.allowd_to_move_to(target.position, board.MASK_VALUE_DEFAULT):
-						_target_position = target.position
-						_target_speed = current.value_to(target.position)
-						_is_moveing = true
-		
 
 func _update_parent_position(delta: float) -> void:
 	if not _is_moveing:
@@ -75,11 +68,12 @@ func _update_parent_position(delta: float) -> void:
 
 	# DISTANCE REMAINING TO TARGET
 
-	var distance := parent.position.distance_to(_target_position)
+	var distance := actor.position.distance_to(_target_position)
 
 	# CURRENT VELOCITY
 
 	var velocity := _target_direction * (max_speed * scaler * _target_speed) * delta
+
 
 	# HAS VELOCITY OVERTAKEN DISTANCE ?
 
@@ -93,4 +87,4 @@ func _update_parent_position(delta: float) -> void:
 		velocity.y = distance * _target_direction.y
 		_is_moveing = false
 
-	parent.position += velocity
+	actor.position += velocity

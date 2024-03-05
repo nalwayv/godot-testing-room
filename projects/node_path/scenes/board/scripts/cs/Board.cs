@@ -10,9 +10,11 @@ public partial class Board : TileMap
 	public const int DefaultMaskValue = 2;
 	public const float NodeDistance = 20f;
 
+	[ExportCategory("Graph Color")]
+	[Export]
+	public Color GraphColor { get; set; } = new(0f, 0f, 0f);
 
-	private Color _graphColor = new(0f, 0f, 0f);
-	private List<Vector2I> _coords = new();
+	private readonly List<Vector2I> _coords = new();
 	private BoardGraph _boardGraph;
 	private Actor _actor;
 
@@ -24,6 +26,40 @@ public partial class Board : TileMap
 
 		SetupBoard();
 		SetupActors();
+	}
+
+
+	private void AddLine(Vector2 from, Vector2 to)
+	{
+		Line2D line = new()
+		{
+			Points = new[] {from, to},
+			DefaultColor = GraphColor,
+			Width = 1.0f,
+			ZIndex = 0
+		};
+
+		AddChild(line);
+	}
+
+
+	private void AddCircle(Vector2 position, float radius)
+	{
+		Vector2[] pts = new Vector2[8];
+
+		for (int i = 0; i < pts.Length; i++)
+		{
+			float at = i * Mathf.Tau / pts.Length;
+			pts[i] = position + new Vector2(Mathf.Cos(at), Mathf.Sin(at)) * radius;
+		}
+
+		Polygon2D polygon2D = new()
+		{
+			Color = GraphColor,
+			Polygon = pts
+		};
+
+		AddChild(polygon2D);
 	}
 
 
@@ -62,9 +98,9 @@ public partial class Board : TileMap
 			{
 				var to = _coords[j];
 
-				for (int d = 0; d < directions.Length; d++)
+				foreach (Vector2I dir in directions)
 				{
-					if ((from + directions[d]) == to)
+					if ((from + dir) == to)
 					{
 						_boardGraph.AddEdge(
 							MapToLocal(from),
@@ -90,42 +126,18 @@ public partial class Board : TileMap
 
 			while (que.Count > 0)
 			{
-
 				BoardNode current = que.Dequeue();
 
 				foreach (BoardNode neighbour in current)
 				{
 					// DRAW LINE
 
-					Line2D line = new()
-					{
-						Points = new[]
-						{
-							current.Position,
-							neighbour.Position
-						},
-						Width = 1f,
-						DefaultColor = _graphColor
-					};
-					AddChild(line);
+					AddLine(current.Position, neighbour.Position);
 
 					// DRAW CIRCLE
 
-					Vector2[] pts = new Vector2[8];
-					float radius = 4f;
-
-					for (int i = 0; i < pts.Length; i++)
-					{
-						float at = i * Mathf.Tau / pts.Length;
-						pts[i] = current.Position + new Vector2(Mathf.Cos(at), Mathf.Sin(at)) * radius;
-					}
-
-					Polygon2D polygon2D = new()
-					{
-						Color = _graphColor,
-						Polygon = pts
-					};
-					AddChild(polygon2D);
+					AddCircle(current.Position, 4f);
+	
 
 					if (!visited.Contains(neighbour.Position))
 					{
@@ -154,5 +166,16 @@ public partial class Board : TileMap
 	public BoardNode FindNode(Vector2 origin)
 	{
 		return _boardGraph.FindNode(origin);
+	}
+
+
+	public BoardNode FindNodeDirection(Vector2 origin, Vector2 direction)
+	{
+		if(!direction.IsNormalized())
+		{
+			return _boardGraph.FindNode(origin + direction.Normalized() * NodeDistance);
+		}
+
+		return _boardGraph.FindNode(origin + direction * NodeDistance);
 	}
 }

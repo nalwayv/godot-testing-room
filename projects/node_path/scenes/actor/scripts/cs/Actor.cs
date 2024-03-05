@@ -2,14 +2,17 @@ using Godot;
 
 public partial class Actor : Node2D
 {
-	private Color _color = new(0.88f, 0.49f, 0.12f, 1f);
+	[ExportCategory("Color")]
+	[Export]
+	public Color ActorColor { get; set; } = new(0.88f, 0.49f, 0.12f, 1f);
+	
 	private Polygon2D _polygon2D;
 
 
 	public override void _Ready()
 	{
 		_polygon2D = GetNode<Polygon2D>("Polygon2D");
-		_polygon2D.Color = _color;
+		_polygon2D.Color = ActorColor;
 	}
 
 
