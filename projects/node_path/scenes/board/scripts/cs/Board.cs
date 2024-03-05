@@ -45,7 +45,7 @@ public partial class Board : TileMap
 
 	private void AddCircle(Vector2 position, float radius)
 	{
-		Vector2[] pts = new Vector2[8];
+		Vector2[] pts = new Vector2[6];
 
 		for (int i = 0; i < pts.Length; i++)
 		{

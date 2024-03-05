@@ -36,9 +36,9 @@ func _add_line(from: Vector2, to: Vector2) -> void:
 func _add_circle(origin: Vector2, radius: float) -> void:
 	var pts := 6
 	var pts_data: Array[Vector2] = []
-	
-	pts_data.resize(pts + 1)
-	for i in range(pts + 1):
+	pts_data.resize(pts)
+
+	for i in range(pts):
 		var at: float = i * TAU / pts
 		pts_data[i] = origin+ Vector2(cos(at), sin(at)) * radius
 
@@ -97,7 +97,7 @@ func _setup_board() -> void:
 	
 				# DRAW CIRCLE
 
-				_add_circle(current.position, 5)
+				_add_circle(current.position, 4)
 
 				# ADD TO VISITED
 
