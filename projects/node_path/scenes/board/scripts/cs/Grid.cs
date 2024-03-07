@@ -40,17 +40,27 @@ public partial class Grid : Node
 	{
 		Vector2 end = Origin + Size;
 
-		// LINES
+		// GRID LINES
 
-		for (var i = Origin.Y; i <= end.Y; i += Cell)
+		for (var i = Origin.Y + Cell; i < end.Y; i += Cell)
 		{
 			AddLine(new Vector2(Origin.X, i), new Vector2(end.X, i));
 		}
 
-		for (var i = Origin.X; i <= end.Y; i += Cell)
+		for (var i = Origin.X + Cell; i < end.Y; i += Cell)
 		{
 			AddLine(new Vector2(i, Origin.Y), new Vector2(i, end.Y));
 		}
+
+		// GRID OUTLINE
+		//	top
+		//	bottom
+		//	left
+		//	right
+		AddLine(Origin, new Vector2(Origin.X + Size.X, Origin.Y));
+		AddLine(new Vector2(Origin.X, Origin.Y + Size.Y), Origin + Size);
+		AddLine(Origin, new Vector2(Origin.X, Origin.Y + Size.Y));
+		AddLine(new Vector2(Origin.X + Size.X, Origin.Y), Origin + Size);
 
 		// BACKGROUND
 

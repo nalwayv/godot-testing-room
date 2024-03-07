@@ -28,13 +28,23 @@ func _add_line(from: Vector2, to: Vector2) -> void:
 func _draw_grid() -> void:
 	var end := origin + size
 	
-	# LINES
+	# GRID LINES
 
-	for i in range(origin.y, end.y + 1, cell):
+	for i in range(origin.y + cell, end.y, cell):
 		_add_line(Vector2(origin.x, i), Vector2(end.x, i))
 
-	for i in range(origin.x, end.x + 1, cell):
+	for i in range(origin.x + cell, end.x, cell):
 		_add_line(Vector2(i, origin.y), Vector2(i, end.y))
+
+	# GRID OUTLINE
+	#	top
+	#	bottom
+	#	left
+	#	right
+	_add_line(origin, Vector2(origin.x + size.x, origin.y))
+	_add_line(Vector2(origin.x, origin.y + size.y), origin + size)
+	_add_line(origin, Vector2(origin.x, origin.y + size.y))
+	_add_line(Vector2(origin.x + size.x, origin.y), origin + size)
 
 	# BACKGROUND
 
